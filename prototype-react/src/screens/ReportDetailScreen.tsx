@@ -21,13 +21,19 @@ export function ReportDetailScreen({ api }: { api: PrototypeApi }) {
       <HeaderRow title="Incident report" onBack={actions.backFromDetail} />
       <div className="bg-[#fcfbf8] flex-1 overflow-auto">
         {showSubmitBanner && (
-          <div className="mx-5 mt-3 bg-[#e9f7ff] border border-[#d4eefd] rounded-lg shadow-[0_0_2px_rgba(0,0,0,.2)] px-3.5 py-2.5 flex gap-2.5 items-center">
-            <span className="flex-none w-[22px] h-[22px] rounded-full bg-[#16a085] flex items-center justify-center mt-px">
-              <CheckIcon size={13} strokeWidth={3.2} />
+          <div
+            role="status"
+            className="relative bg-[#037e81] text-white px-[23px] py-[23px] min-h-[112px] flex flex-col items-center justify-center gap-2.5 text-center shadow-[0_1px_4px_1px_rgba(0,0,0,.1)]"
+          >
+            <span className="w-9 h-9 rounded-full bg-white/[.18] flex items-center justify-center">
+              <CheckIcon size={20} stroke="#fff" strokeWidth={2.4} />
             </span>
-            <span className="flex-1 font-bold text-[14.5px] text-[#0173b4]">Report saved</span>
-            <span className="flex-none w-6 h-6 flex items-center justify-center cursor-pointer active:opacity-70" onClick={actions.dismissBanner}>
-              <XIcon />
+            <span className="font-medium text-[14px] leading-5 tracking-[.3px]">Report saved</span>
+            <span
+              className="absolute top-0 right-0 w-10 h-10 flex items-center justify-center cursor-pointer active:opacity-70"
+              onClick={actions.dismissBanner}
+            >
+              <XIcon stroke="#fff" />
             </span>
           </div>
         )}
