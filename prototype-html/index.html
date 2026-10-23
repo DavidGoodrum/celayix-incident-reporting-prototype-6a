@@ -61,7 +61,15 @@
    This file is inlined into index.html for the standalone deliverable;
    kept separate here only while drafting for easier editing. */
 
-const CHECKPOINTS = ['Front Door', 'Reception', 'Courtyard', 'North Parking Lot'];
+const CP_AREAS = [
+  { area: 'Main Entrance', items: ['Front Door', 'Lobby', 'Reception Desk'] },
+  { area: 'East Wing', items: ['Gallery 1', 'Gallery 2', 'Fire Exit'] },
+  { area: 'West Wing', items: ['Gallery 3', 'Fire Exit', 'Staff Room'] },
+  { area: 'Annex', items: ['Front Door', 'Archive Room'] },
+  { area: 'Loading Dock', items: ['Dock Door', 'Freight Elevator'] },
+  { area: 'North Parking Lot', items: ['Entrance Gate', 'Fire Lane', 'Pay Station'] },
+];
+const DEFAULT_CP = 'Main Entrance|Front Door';
 const DICTATED =
   'Tree came down across the north parking spaces, blocking three bays and the fire lane. Branches are on a parked car.';
 
@@ -143,7 +151,7 @@ function patch(p) {
 function contextParts() {
   const s = state;
   const tour = s.reportFrom === 'tour' || s.reportFrom === 'checkpoint' ? 'Opening Check' : null;
-  const checkpoint = s.checkpoint || (s.reportFrom === 'checkpoint' ? 'Front Door' : null);
+  const checkpoint = s.checkpoint === 'none' ? null : s.checkpoint ? s.checkpoint.split('|')[1] : (s.reportFrom === 'checkpoint' ? 'Front Door' : null);
   let line1;
   if (!tour && !checkpoint) {
     line1 = s.checkedIn ? 'Police Museum · Current Shift' : 'No active shift';
@@ -721,7 +729,11 @@ function fieldRow(iconHtml, label, badge, value, note) {
 function renderDetails() {
   const s = state;
   const ctx = contextParts();
-  const checkpointOptions = CHECKPOINTS.map((name) => ({ name, selected: name === (s.pendingCheckpoint || 'Front Door') }));
+  const pcp = s.pendingCheckpoint || (s.reportFrom === 'checkpoint' ? DEFAULT_CP : 'none');
+  const noCpSelected = pcp === 'none';
+  const pcpName = noCpSelected ? 'No checkpoint' : pcp.split('|')[1];
+  const pcpArea = noCpSelected ? '' : pcp.split('|')[0];
+  const checkCheck = icon.check('#e96c24', 16, 2.6);
 
   return `
   ${statusBar('4:12', '#000000', '#fcfbf8')}
@@ -749,18 +761,28 @@ function renderDetails() {
         <span class="block font-bold text-[15px] text-navy">Checkpoint</span>
         <span class="relative block">
           <span class="flex items-center gap-2 mt-1.5 border rounded-[10px] bg-white px-3 py-2.5 cursor-pointer" style="border-color:${s.checkpointListOpen ? '#e96c24' : '#a7a7a7'}" data-action="toggleCheckpointList">
-            <span class="flex-1 text-[15px] text-navy">${s.pendingCheckpoint || 'Front Door'}</span>
+            <span class="flex-1 min-w-0 flex items-baseline gap-1.5"><span class="text-[15px] text-navy">${pcpName}</span><span class="text-xs text-[#8f8f8f]">${pcpArea}</span></span>
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#333333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-none" style="transform:${s.checkpointListOpen ? 'rotate(180deg)' : 'none'}"><path d="m6 9 6 6 6-6"/></svg>
           </span>
           ${s.checkpointListOpen ? `
-          <span class="absolute left-0 right-0 top-full mt-1.5 z-[5] border border-[#a7a7a7] rounded-[10px] bg-white overflow-hidden shadow-[0_12px_24px_-8px_rgba(17,17,17,.28)] block">
-            ${checkpointOptions.map((opt, i) => `
-              <span class="flex items-center gap-2.5 px-3 py-[11px] cursor-pointer" style="border-bottom:${i === checkpointOptions.length - 1 ? 'none' : '1px solid #e7e0d9'};background:${opt.selected ? '#fef9f6' : '#fff'}" data-action="pickCheckpoint" data-arg="${opt.name}">
-                <span class="flex-1 text-[15px] text-navy">${opt.name}</span>${opt.selected ? icon.check('#e96c24', 16, 2.6) : ''}
+          <span class="absolute left-0 right-0 top-full mt-1.5 z-[5] border border-[#a7a7a7] rounded-[10px] bg-white overflow-auto max-h-[300px] shadow-[0_12px_24px_-8px_rgba(17,17,17,.28)] block">
+            <span class="flex items-center gap-2.5 px-3 py-[11px] cursor-pointer border-b border-[#e6e6e6]" style="background:${noCpSelected ? '#fef9f6' : '#fff'}" data-action="pickCheckpoint" data-arg="none">
+              <span class="flex-1 text-[15px] text-[#676767]">No checkpoint</span>${noCpSelected ? checkCheck : ''}
+            </span>
+            ${CP_AREAS.map((g) => `
+              <span class="block">
+                <span class="sticky top-0 block px-3 py-[7px] bg-[#f9f9f9] border-y border-[#e6e6e6] font-medium text-xs text-[#676767]">${g.area}</span>
+                ${g.items.map((name, i) => {
+                  const id = g.area + '|' + name;
+                  const sel = id === pcp;
+                  return `<span class="flex items-center gap-2.5 px-3 py-[11px] cursor-pointer" style="border-bottom:1px solid ${i === g.items.length - 1 ? 'transparent' : '#e6e6e6'};background:${sel ? '#fef9f6' : '#fff'}" data-action="pickCheckpoint" data-arg="${id}">
+                    <span class="flex-1 text-[15px] text-navy">${name}</span>${sel ? checkCheck : ''}
+                  </span>`;
+                }).join('')}
               </span>`).join('')}
           </span>` : ''}
         </span>
-        <span class="block text-[12.5px] text-muted mt-1.5">Originally captured: ${s.reportFrom === 'checkpoint' ? 'Front Door' : 'None set'}</span>
+        <span class="block text-[12.5px] text-muted mt-1.5">Originally captured: ${s.reportFrom === 'checkpoint' ? 'Front Door · Main Entrance' : 'None set'}</span>
       </span>
     </div>
 

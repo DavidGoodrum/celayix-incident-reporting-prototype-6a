@@ -63,7 +63,15 @@ export interface AppState {
   bannerDismissed: boolean
 }
 
-export const CHECKPOINTS = ['Front Door', 'Reception', 'Courtyard', 'North Parking Lot'] as const
+export const CP_AREAS: { area: string; items: string[] }[] = [
+  { area: 'Main Entrance', items: ['Front Door', 'Lobby', 'Reception Desk'] },
+  { area: 'East Wing', items: ['Gallery 1', 'Gallery 2', 'Fire Exit'] },
+  { area: 'West Wing', items: ['Gallery 3', 'Fire Exit', 'Staff Room'] },
+  { area: 'Annex', items: ['Front Door', 'Archive Room'] },
+  { area: 'Loading Dock', items: ['Dock Door', 'Freight Elevator'] },
+  { area: 'North Parking Lot', items: ['Entrance Gate', 'Fire Lane', 'Pay Station'] },
+]
+export const DEFAULT_CP = 'Main Entrance|Front Door'
 
 export function buildDayLabels(): string[] {
   const names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
