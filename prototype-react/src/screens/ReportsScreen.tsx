@@ -24,7 +24,6 @@ export function ReportsScreen({ api }: { api: PrototypeApi }) {
           {report && (
             <div
               className="bg-white border border-[#e7e0d9] rounded-lg shadow-[0_0_2px_rgba(0,0,0,.2)] p-[15px] cursor-pointer active:opacity-70"
-              style={{ borderLeft: '3px solid #e96c24' }}
               onClick={actions.openQueuedDetail}
             >
               <div className="flex items-center justify-between">

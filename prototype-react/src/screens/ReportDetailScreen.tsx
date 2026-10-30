@@ -75,7 +75,7 @@ export function ReportDetailScreen({ api }: { api: PrototypeApi }) {
             </div>
             <div className="px-5 pt-2 flex flex-col gap-2">
               {report.followUps.map((fu, i) => (
-                <div key={i} className="bg-white border border-[#e7e0d9] rounded-lg shadow-[0_0_2px_rgba(0,0,0,.2)] px-[15px] py-2.5" style={{ borderLeft: '3px solid #e96c24' }}>
+                <div key={i} className="bg-white border border-[#e7e0d9] rounded-lg shadow-[0_0_2px_rgba(0,0,0,.2)] px-[15px] py-2.5">
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-[13px] tracking-[.05em] uppercase text-ink">Follow-up {i + 1}</span>
                     <span className="text-[13px] text-ink">{fu.time}</span>
